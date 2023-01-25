@@ -15,9 +15,9 @@ uint32_t gpio_leds_state = 0U;
 void welcome_blink() {
 	for(int i=0; i<3; i++) {
 		gpio_put_all(led_pins_bitmask);
-		sleep_ms(1000);
+		sleep_ms(500);
 		gpio_put_all(0U);
-		sleep_ms(1000);
+		sleep_ms(500);
 	}
 }
 
@@ -67,6 +67,7 @@ int main() {
 		printf("WiFi init failed");
 		return -1;
 	}
+	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
 
 	for(int i=0; i<9; i++) {
 		gpio_init(i);
@@ -80,7 +81,8 @@ int main() {
 	gpio_set_dir(10, GPIO_OUT);
 
 	printf("Init successful\n");
-	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+	
+	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
 	
 	welcome_blink();
 
@@ -94,9 +96,9 @@ int main() {
 		fast_mode = gpio_get(10);
 		
 		if(fast_mode) {
-			sleep_ms(100);
-		} else {
 			sleep_ms(30);
+		} else {
+			sleep_ms(100);
 		}
 	}
 	
