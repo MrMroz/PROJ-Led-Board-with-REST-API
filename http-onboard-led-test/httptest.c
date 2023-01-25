@@ -11,17 +11,10 @@ int main(void) {
         	printf("WiFi init failed");
         	return -1;
     	}
-    	
+    printf("WIFI initialized\n");
     	
 	char ssid[] = "Ledziaki";
 	char pass[] = "12345678";
-	
-	if (cyw43_arch_init()) {
-		printf("WIFI init failed, exiting\n");
-		return -1;
-	}
-	
-	print("WIFI initialised\n");
 	
 	cyw43_arch_enable_sta_mode();
 	
@@ -30,7 +23,7 @@ int main(void) {
 		return -1;
 	}
 	
-	print("WIFI connected")
+	printf("WIFI connected")
 
 	/* Get a default configuration for the http server */
 	cfg = http_default_cfg();
