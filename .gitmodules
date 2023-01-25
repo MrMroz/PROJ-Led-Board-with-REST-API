@@ -1,0 +1,3 @@
+[submodule "lib/picow-http"]
+	path = lib/picow-http
+	url = https://gitlab.com/slimhazard/picow_http.git

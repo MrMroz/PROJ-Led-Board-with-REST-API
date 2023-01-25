@@ -28,3 +28,4 @@ add_compile_options(-Wall
 # Podkatalogi dodaje sie "add_subdirectory(nazwa_katalogu)"
 add_subdirectory(blink)
 add_subdirectory(http-onboard-led-test)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib/picow-http)
