@@ -1,0 +1,7 @@
+- server:
+    - custom:
+        path: /temp
+        methods:
+            - GET
+            - PUT
+            
