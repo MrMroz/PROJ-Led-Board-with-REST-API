@@ -6,9 +6,11 @@ add_executable(http_blink
         )
 
 target_link_libraries(http_blink
+		pico_stdio
         pico_stdlib
         picow_http
         pico_cyw43_arch_lwip_threadsafe_background
+        pico_multicore
         )
 
 # create map/bin/hex file etc.
@@ -17,9 +19,8 @@ pico_add_extra_outputs(http_blink)
 # add url via pico_set_program_url
 example_auto_set_url(http_blink)
 
-
-pico_enable_stdio_usb(http_blink 1)
 pico_enable_stdio_uart(http_blink 0)
+pico_enable_stdio_usb(http_blink 1)
 
 target_include_directories(http_blink
 	PRIVATE	opt

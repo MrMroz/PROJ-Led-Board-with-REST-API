@@ -1,6 +1,6 @@
 - server:
     - custom:
-        path: /temp
+        path: /led
         methods:
             - GET
             - PUT

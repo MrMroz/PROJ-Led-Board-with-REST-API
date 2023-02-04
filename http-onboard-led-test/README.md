@@ -9,3 +9,8 @@ Zdefiniowane dwa endpointy:
 
 `GET /led/` ma zwracać stan led'a (OFF/ON)
 `PUT /led/` zmienia stan za pomocą query param (`/led?state=on` lub  `/led?state=off`)
+
+
+Zasoby:
+- [err_t kody błędów](https://www.nongnu.org/lwip/2_1_x/group__infrastructure__errors.html)
+- [picow-http docs](https://slimhazard.gitlab.io/picow_http/index.html)

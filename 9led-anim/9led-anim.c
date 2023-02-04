@@ -78,7 +78,7 @@ int main() {
 	gpio_set_dir(9, GPIO_IN);
 
 	gpio_init(10);
-	gpio_set_dir(10, GPIO_OUT);
+	gpio_set_dir(10, GPIO_IN);
 
 	printf("Init successful\n");
 	

@@ -14,5 +14,4 @@ struct netinfo {
 };
 
 
-err_t get_led_handler(struct http *http, void *p);
-err_t put_led_handler(struct http *http, void *P);
+err_t led_handler(struct http *http, void *p);
