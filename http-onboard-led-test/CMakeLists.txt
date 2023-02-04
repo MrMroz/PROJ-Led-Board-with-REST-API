@@ -24,10 +24,10 @@ pico_enable_stdio_usb(http_blink 1)
 
 target_include_directories(http_blink
 	PRIVATE	opt
-	PRIVATE ${CMAKE_SOURCE_DIR}/lib/picow_http
+	PRIVATE ${CMAKE_SOURCE_DIR}/lib/picow-http
 )
 
-add_subdirectory(../lib/picow_http picow)
+add_subdirectory(../lib/picow-http picow)
 
 picow_http_gen_handlers(http_blink
 	${CMAKE_CURRENT_SOURCE_DIR}/static/config.yaml
