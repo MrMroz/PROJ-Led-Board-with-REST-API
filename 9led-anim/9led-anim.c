@@ -12,6 +12,7 @@ bool pin_10_state = false;
 uint32_t led_pins_bitmask = 511U;
 uint32_t gpio_leds_state = 0U;
 
+// Mruganie wszystkimi ledami
 void welcome_blink() {
 	for(int i=0; i<3; i++) {
 		gpio_put_all(led_pins_bitmask);
@@ -21,7 +22,7 @@ void welcome_blink() {
 	}
 }
 
-
+// Wyliczanie kolejnej klatki animacji jako bitmask wszystkich pinów GPIO
 uint32_t next_frame(uint32_t gls, bool reverse) {
 	switch (gls) {
 		case 0U:
@@ -64,11 +65,12 @@ uint32_t next_frame(uint32_t gls, bool reverse) {
 int main() {
 	stdio_init_all();
 	if (cyw43_arch_init()) {
-		printf("WiFi init failed");
+		printf("WiFi init failed\n");
 		return -1;
 	}
 	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
 
+	// LEDy powinny być podpięte na pinach GPIO 0-8
 	for(int i=0; i<9; i++) {
 		gpio_init(i);
 		gpio_set_dir(i, GPIO_OUT);
@@ -89,11 +91,11 @@ int main() {
 	bool reverse = false;
 	bool fast_mode = false;
 	while (true) {
-		reverse = gpio_get(9);
+		reverse = gpio_get(9); // Odwracanie animacji poprzez stan wysoki na GPIO 9
 		gpio_leds_state = next_frame(gpio_leds_state, reverse);
 		gpio_put_all(gpio_leds_state);
 		
-		fast_mode = gpio_get(10);
+		fast_mode = gpio_get(10); // Przyspieszenie animacji poprzez stan wysoki na GPIO 10
 		
 		if(fast_mode) {
 			sleep_ms(30);

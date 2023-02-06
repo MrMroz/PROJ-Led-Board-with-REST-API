@@ -8,7 +8,6 @@
 #include "pico/cyw43_arch.h"
 
 int main() {
-
     stdio_init_all();
     if (cyw43_arch_init()) {
         printf("WiFi init failed");
@@ -16,6 +15,7 @@ int main() {
     }
     cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
             
+    // Inicjalizacja pinów GPIO
     gpio_init(0);
     gpio_set_dir(0, GPIO_OUT);
     
@@ -25,6 +25,7 @@ int main() {
     gpio_init(20);
     gpio_set_dir(20, GPIO_OUT);
     
+    // Pętla mrugająca po kolei LEDami na pinach GPIO 0,10,20
     while (true) {
         gpio_put(0, 1);
         sleep_ms(250);

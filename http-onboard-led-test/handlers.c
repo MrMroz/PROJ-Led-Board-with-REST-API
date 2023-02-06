@@ -15,6 +15,7 @@ err_t led_handler(struct http *http, void *p) {
 	
 	enum http_method_t method = http_req_method(req);
 	
+	// Switch rozróżniający z jakim żądaniem HTTP mamy do czynienia (GET/PUT)
 	switch (method) {
 		case HTTP_METHOD_GET:
 			bool led_state = gpio_get(0);
@@ -22,11 +23,13 @@ err_t led_handler(struct http *http, void *p) {
 			char * led_state_char = led_state ? "ON" : "OFF";
 			size_t body_len = led_state ? 2 : 3;
 			
+			// Dodawanie nagłówków typu status, content-length, content-type do response
+
 			err = http_resp_set_status(resp, HTTP_STATUS_OK);
 			if (err != ERR_OK) {
 				HTTP_LOG_ERROR("Set status 200 failed: %d", err);
 				return http_resp_err(http,
-							 HTTP_STATUS_INTERNAL_SERVER_ERROR);
+							HTTP_STATUS_INTERNAL_SERVER_ERROR);
 			}
 			
 			if ((err = http_resp_set_hdr_ltrl(resp, "Cache-Control", "no-store"))
@@ -66,21 +69,25 @@ err_t led_handler(struct http *http, void *p) {
 					case ON_LEN:
 						if (memcmp(val, "on", ON_LEN) != 0)
 							return http_resp_err(http,
-									 HTTP_STATUS_UNPROCESSABLE_CONTENT);
+									HTTP_STATUS_UNPROCESSABLE_CONTENT);
 						gpio_put(0, true);
 						break;
 					case OFF_LEN:
 						if (memcmp(val, "off", OFF_LEN) != 0)
 							return http_resp_err(http,
-								 HTTP_STATUS_UNPROCESSABLE_CONTENT);
+								HTTP_STATUS_UNPROCESSABLE_CONTENT);
 						gpio_put(0, false);
 						break;			
 					default:
+
+						// Obsługa nierozpoznanej wartości parametru 'state'
+						// Dodawanie nagłówków typu status, content-length, content-type do response
+						
 						err = http_resp_set_status(resp, HTTP_STATUS_BAD_REQUEST);
 						if (err != ERR_OK) {
 							HTTP_LOG_ERROR("Set status 400 failed: %d", err);
 							return http_resp_err(http,
-										 HTTP_STATUS_INTERNAL_SERVER_ERROR);
+										HTTP_STATUS_INTERNAL_SERVER_ERROR);
 						}
 						
 							if ((err = http_resp_set_hdr_ltrl(resp, "Cache-Control", "no-store"))
@@ -100,13 +107,47 @@ err_t led_handler(struct http *http, void *p) {
 						}
 						
 						return http_resp_send_buf(http, "400", 3, false);
-			}
+				}
 
-			err = http_resp_set_status(resp, HTTP_STATUS_OK);
+				// Obsłużono poprawne żądanie
+				// Dodawanie nagłówków typu status, content-length, content-type do response
+
+				err = http_resp_set_status(resp, HTTP_STATUS_OK);
+				if (err != ERR_OK) {
+					HTTP_LOG_ERROR("Set status 200 failed: %d", err);
+					return http_resp_err(http,
+								HTTP_STATUS_INTERNAL_SERVER_ERROR);
+				}
+				
+					if ((err = http_resp_set_hdr_ltrl(resp, "Cache-Control", "no-store"))
+					!= ERR_OK) {
+					HTTP_LOG_ERROR("Set header Cache-Control failed: %d", err);
+					return http_resp_err(http, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+				}
+				
+					if ((err = http_resp_set_type_ltrl(resp, "text/plain")) != ERR_OK) {
+					HTTP_LOG_ERROR("http_resp_set_type_ltrl() failed: %d", err);
+					return http_resp_err(http, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+				}
+				
+				if ((err = http_resp_set_len(resp, 3)) != ERR_OK) {
+					HTTP_LOG_ERROR("http_resp_set_len() failed: %d", err);
+					return http_resp_err(http, HTTP_STATUS_INTERNAL_SERVER_ERROR);
+				}
+				
+				//body_len = snprintf(body, MAX_INT_LEN, "TEST");
+
+				return http_resp_send_buf(http, "200", 3, false);
+			}
+			
+			// Obsługa źle sformułowanego żądania PUT (brak lub nieprawidłowy parametr)
+			// Kod 400 - nieprawidłowe żądanie
+			
+			err = http_resp_set_status(resp, HTTP_STATUS_BAD_REQUEST);
 			if (err != ERR_OK) {
-				HTTP_LOG_ERROR("Set status 200 failed: %d", err);
+				HTTP_LOG_ERROR("Set status 400 failed: %d", err);
 				return http_resp_err(http,
-							 HTTP_STATUS_INTERNAL_SERVER_ERROR);
+							HTTP_STATUS_INTERNAL_SERVER_ERROR);
 			}
 			
 				if ((err = http_resp_set_hdr_ltrl(resp, "Cache-Control", "no-store"))
@@ -125,37 +166,11 @@ err_t led_handler(struct http *http, void *p) {
 				return http_resp_err(http, HTTP_STATUS_INTERNAL_SERVER_ERROR);
 			}
 			
-			//body_len = snprintf(body, MAX_INT_LEN, "TEST");
-
-			return http_resp_send_buf(http, "200", 3, false);
-		}
-
-		err = http_resp_set_status(resp, HTTP_STATUS_BAD_REQUEST);
-		if (err != ERR_OK) {
-			HTTP_LOG_ERROR("Set status 400 failed: %d", err);
-			return http_resp_err(http,
-						 HTTP_STATUS_INTERNAL_SERVER_ERROR);
-		}
+			return http_resp_send_buf(http, "400", 3, false);
+			break;
 		
-			if ((err = http_resp_set_hdr_ltrl(resp, "Cache-Control", "no-store"))
-			!= ERR_OK) {
-			HTTP_LOG_ERROR("Set header Cache-Control failed: %d", err);
-			return http_resp_err(http, HTTP_STATUS_INTERNAL_SERVER_ERROR);
-		}
-		
-			if ((err = http_resp_set_type_ltrl(resp, "text/plain")) != ERR_OK) {
-			HTTP_LOG_ERROR("http_resp_set_type_ltrl() failed: %d", err);
-			return http_resp_err(http, HTTP_STATUS_INTERNAL_SERVER_ERROR);
-		}
-		
-		if ((err = http_resp_set_len(resp, 3)) != ERR_OK) {
-			HTTP_LOG_ERROR("http_resp_set_len() failed: %d", err);
-			return http_resp_err(http, HTTP_STATUS_INTERNAL_SERVER_ERROR);
-		}
-		
-		return http_resp_send_buf(http, "400", 3, false);
-		break;
-		
+		// Inne żądania niż GET|PUT nie są obsługiwane
+		// Zwracamy kod 405 - metoda niedozwolona
 		default:
 			printf("Unrecognised http method!\n");
 			
@@ -163,7 +178,7 @@ err_t led_handler(struct http *http, void *p) {
 			if (err != ERR_OK) {
 				HTTP_LOG_ERROR("Set status 405 failed: %d", err);
 				return http_resp_err(http,
-							 HTTP_STATUS_INTERNAL_SERVER_ERROR);
+							HTTP_STATUS_INTERNAL_SERVER_ERROR);
 			}
 			
 			if ((err = http_resp_set_hdr_ltrl(resp, "Cache-Control", "no-store"))

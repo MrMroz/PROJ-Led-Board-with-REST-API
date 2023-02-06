@@ -7,11 +7,12 @@
 #include "pico/multicore.h"
 #include "pico/sync.h"
 
-
+// Plik nagłówka z funkcjami obsługującymi żądania
 #include "handlers.h"
 
 static struct netinfo netinfo;
 
+// Bitmaska do oznaczania zasobów dostępnych zarówno pod GET jak i PUT
 #define HTTP_METHODS_GET_PUT ((1U << HTTP_METHOD_GET) | (1U << HTTP_METHOD_PUT))
 
 int main(void) {
@@ -24,6 +25,9 @@ int main(void) {
 	gpio_init(1);
 	gpio_set_dir(1, GPIO_IN);
 	
+
+	// Należy podać stan wysoki na GPIO 1 aby uruchomić program
+	// Po to aby mieć czas na skonfigurowanie logowania po USB
 	bool start_trigger = false;
 	
 	while(!start_trigger) {
@@ -33,6 +37,7 @@ int main(void) {
 	}
 	
 	
+	// Inicjalizacja WiFi
 	printf("WiFi init in progress...\n");
     if (cyw43_arch_init()) {
     	printf("WiFi init failed!\n");
@@ -54,6 +59,8 @@ int main(void) {
 	}
 	
 	printf("WIFI connected\n");
+
+	// Inicjalizacja GPIO 0
 	printf("GPIO init in progress...\n");
 	
 	gpio_init(0);
@@ -62,10 +69,13 @@ int main(void) {
 	
 	printf("GPIO init successful\n");
 
-	/* Get a default configuration for the http server */
+	/* Domyślna konfiguracja picow-http */
 	cfg = http_default_cfg();
 	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
 	
+
+	// Rejestrowanie zasobów pod odpowiednie ścieżki
+	// (Należy pamiętać że muszą być zdefiniowane w static/config.yaml)
 	printf("Registering GET|PUT /led/...\n");
 	
 	if ((err = register_hndlr_methods(&cfg, "/led", led_handler,
@@ -76,12 +86,13 @@ int main(void) {
 		}
 
 	printf("Starting the server...\n");
-	/* Start the server */
+	/* Start serwera */
 	if (http_srv_init(&srv, &cfg) != ERR_OK) {
 		// Error handling
 		printf("Starting server failed!\n");
 	}
 	
+	// Pętla oczekiwania na 'interrupt'
 	for (;;) {
 		#if PICO_CYW43_ARCH_POLL
 			cyw43_arch_poll();
@@ -91,7 +102,7 @@ int main(void) {
 		#endif
 	}
 
-	
+	// Ta część nie powinna nigdy sie wykonać
 	printf("This should be unreachable!\n");
 	return 0;
 }
