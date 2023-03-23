@@ -27,8 +27,9 @@ add_compile_options(-Wall
 
 # Podkatalogi dodaje sie "add_subdirectory(nazwa_katalogu)"
 add_subdirectory(blink)
-add_subdirectory(http-onboard-led-test)
+#add_subdirectory(http-onboard-led-test)
 add_subdirectory(3led-blink)
 add_subdirectory(9led-anim)
 add_subdirectory(print-blink)
 add_subdirectory(multicore-test)
+add_subdirectory(demo-circle)
