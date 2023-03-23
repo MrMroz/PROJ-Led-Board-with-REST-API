@@ -11,7 +11,7 @@ R1  | o o | G1
 B1  \ o o | E
 A   / o o | B
 C   | o o | D
-CLK | o o | STB
+CLK | o o | LATCH
 OEn | o o | GND
     \-----/
 ```
