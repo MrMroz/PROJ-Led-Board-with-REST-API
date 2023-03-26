@@ -5,10 +5,10 @@ HUB75E Pinout:
 
 ```
     /-----\
-R0  | o o | G0
-B0  | o o | GND
 R1  | o o | G1
-B1  \ o o | GND
+B1  | o o | GND
+R2  | o o | G2
+B2  \ o o | GND
 A   / o o | B
 C   | o o | D
 CLK | o o | LATCH
