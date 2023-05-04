@@ -34,4 +34,25 @@ Latch - GPIO6
 OEn - GPIO7
 ```
 
+Service Pinout:
+
+```
+      /---\                     
+R1    | o | 
+B1    | o | 
+G1    | o | 
+R2    | o | 
+B2    | o | 
+G2    | o | 
+A     | o | 
+B     | o |
+C     | o |
+D     | o |
+CLK   | o |                         /---\
+OEn   | o |                    GND  | o |
+LATCH | o |                    GND  | o |
+      \---/                         \---/
+```
+
+
 This is a 1/32nd scan panel. The inputs A, B, C, D select one of 32 rows, starting at the top and working down (assuming the first pixel to be shifted is the one on the left of the screen, even though this is the "far end" of the shift register). R0, B0, G0 contain pixel data for the upper half of the screen. R1, G1, B1 contain pixel data for the lower half of the screen, which is scanned simultaneously with the upper half.
