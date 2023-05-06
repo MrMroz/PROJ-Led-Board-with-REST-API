@@ -277,8 +277,8 @@ void fill_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
     }
 }
 
-
-void fill_half_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
+/*  funkcja wyświetla prostokąt w prostokącie   */
+void fill_rect_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
     for (int i = 0; i < MATRIX_HEIGHT; i++) {
         // Wyłączanie wyjścia matrycy LED
         gpio_put(OE_PIN, 1);
@@ -291,12 +291,12 @@ void fill_half_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
         // Wysłanie danych pikseli do rejestru FM6124
         for (int j = 0; j < MATRIX_WIDTH; j++) {
         gpio_put(CLK_PIN, 0);
-        gpio_put(R1_PIN, (i < 16) & r);
-        gpio_put(G1_PIN, (i < 16) & g);
-        gpio_put(B1_PIN, (i < 16) & b);
-        gpio_put(R2_PIN, (i > 15) & r);
-        gpio_put(G2_PIN, (i > 15) & g);
-        gpio_put(B2_PIN, (i > 15) & b);
+        gpio_put(R1_PIN, (i < 16) & (i < 10) & (j < 15) & r);
+        gpio_put(G1_PIN, (i < 16) & ((9 < i && j < 35) | (i < 10 && j > 14 && j < 35))  & g);
+        gpio_put(B1_PIN, (i < 16) & (34 < j && j < MATRIX_WIDTH) & b);
+        gpio_put(R2_PIN, (i > 15) & 0 & r);
+        gpio_put(G2_PIN, (i > 15) & ((i < 20) && (j < 35)) & g);
+        gpio_put(B2_PIN, (i > 15) & (((i < MATRIX_HEIGHT && j < MATRIX_WIDTH)  && i > 19) | (i < 20 && j > 34)) & b);
 
         // sleep_us(1);
         gpio_put(CLK_PIN, 1);
@@ -475,11 +475,11 @@ int main() {
         // fill_row(3, 1, 0, 0, 100);               // wyświetlanie wiersza
         // fill_column(30, 1, 0, 0, 100);           // wyświetlanie kolumny
         // fill_matrix(1,0,0,200);                  // wypełnianie matrycy
-        // fill_half_matrix(1,0,0,300);             // to jeszcze nie działa
+        fill_rect_matrix(1,1,1,100);             // wyświetla prostokąt w prostokącie
         // fill_rgb_matrix(5);                     // to wyświetla trójkątny wzorek
         // animation(30, 200);                      // to animacja taka z przesuwającą się kolumną i wierszem
         // send_frame();                            // to taki wzorek
-        picture_animation(0, 0, 1, 50);          // a to obrazki wyświetlane co chwile
+        // picture_animation(0, 0, 1, 50);          // a to obrazki wyświetlane co chwile
 
     }
     return 0;
