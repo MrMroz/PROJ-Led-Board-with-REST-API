@@ -475,11 +475,11 @@ int main() {
         // fill_row(3, 1, 0, 0, 100);               // wyświetlanie wiersza
         // fill_column(30, 1, 0, 0, 100);           // wyświetlanie kolumny
         // fill_matrix(1,0,0,200);                  // wypełnianie matrycy
-        fill_rect_matrix(1,1,1,100);             // wyświetla prostokąt w prostokącie
+        // fill_rect_matrix(1,1,1,100);             // wyświetla prostokąt w prostokącie
         // fill_rgb_matrix(5);                     // to wyświetla trójkątny wzorek
         // animation(30, 200);                      // to animacja taka z przesuwającą się kolumną i wierszem
         // send_frame();                            // to taki wzorek
-        // picture_animation(0, 0, 1, 50);          // a to obrazki wyświetlane co chwile
+        picture_animation(0, 0, 1, 50);          // a to obrazki wyświetlane co chwile
 
     }
     return 0;
