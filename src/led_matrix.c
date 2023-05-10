@@ -60,123 +60,129 @@ ordered A B C D where a High means 1 and a low means 0. So for example for row 1
 we would have A=1 B=1 C=0 D=1 (1+2+0+8 = 11).
 */
 void set_row(uint8_t r) {
-switch (r & 0x0F) // dla qwartości z przedziłąu 16-31 przypisuje 0-15
-{
-    case 0b0000: //0    
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 0);
-        break;
+// switch (r & 0x0F) // dla qwartości z przedziłąu 16-31 przypisuje 0-15
+// {
+//     case 0b0000: //0    
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b0001: //1
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 0);
-        break;
+//     case 0b0001: //1
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b0010: //2
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 0);
-        break;
+//     case 0b0010: //2
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b0011: //3
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 0);
-        break;
+//     case 0b0011: //3
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b0100: //4
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 0);
-        break;
+//     case 0b0100: //4
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b0101: //5
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 0);
-        break;
+//     case 0b0101: //5
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b0110: //6
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 0);
-        break;
+//     case 0b0110: //6
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b0111: //7
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 0);
-        break;
+//     case 0b0111: //7
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 0);
+//         break;
 
-    case 0b1000: //8
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1000: //8
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    case 0b1001: //9
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1001: //9
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    case 0b1010: //10
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1010: //10
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    case 0b1011: //11
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 0);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1011: //11
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 0);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    case 0b1100: //12
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1100: //12
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    case 0b1101: //13
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 0);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1101: //13
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 0);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    case 0b1110: //14
-        gpio_put(A_PIN, 0);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1110: //14
+//         gpio_put(A_PIN, 0);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    case 0b1111: //15
-        gpio_put(A_PIN, 1);
-        gpio_put(B_PIN, 1);
-        gpio_put(C_PIN, 1);
-        gpio_put(D_PIN, 1);
-        break;
+//     case 0b1111: //15
+//         gpio_put(A_PIN, 1);
+//         gpio_put(B_PIN, 1);
+//         gpio_put(C_PIN, 1);
+//         gpio_put(D_PIN, 1);
+//         break;
 
-    default:
-        break;
-    }
+//     default:
+//         break;
+//     }
+
+    gpio_put(A_PIN, (r & 0x0F) & (1 << 0));
+    gpio_put(B_PIN, (r & 0x0F) & (1 << 1));
+    gpio_put(C_PIN, (r & 0x0F) & (1 << 2));
+    gpio_put(D_PIN, (r & 0x0F) & (1 << 3));
+
 }
 
 /* dla 64 bitów w rejestrze */
