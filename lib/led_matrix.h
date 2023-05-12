@@ -30,6 +30,7 @@
 static inline void led_matrix_init();
 void set_row(uint8_t r);
 static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_t b, int brightness);
+static inline void set_two_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, uint8_t second_pixel, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void fill_row(int y, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void fill_column(int x, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void fill_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness);
@@ -38,6 +39,8 @@ void fill_rgb_matrix(int brightness);
 void animation(int speed, int brightness);
 void send_frame();
 void send_picture(const unsigned short *picture, uint8_t r, uint8_t g, uint8_t b, int brightness);
+void send_picture_two_pixels(const unsigned short *picture, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void picture_animation(uint8_t r, uint8_t g, uint8_t b, int brightness);
+void picture_animation_two_pixels(uint8_t r, uint8_t g, uint8_t b, int brightness);
 
 #endif
