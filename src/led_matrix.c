@@ -5,7 +5,7 @@
 // #define SET_ROW_PINS(row) PORTC = row | PORTC & 240
 
 // Bufor ramki dla jednej kolumny pikseli
-uint16_t pixel_buffer[32];
+// uint16_t pixel_buffer[32];
 
 
 // Inicjalizacja pinów GPIO
@@ -38,7 +38,7 @@ static inline void led_matrix_init() {
 	gpio_set_dir(CLK_PIN, GPIO_OUT);
 
 	// Ustawienie stanu początkowego wyjść
-	gpio_put(OE_PIN, 0);
+	gpio_put(OE_PIN, 1);
 	gpio_put(LAT_PIN, 0);
 	gpio_put(R1_PIN, 0);
 	gpio_put(G1_PIN, 0);
@@ -289,14 +289,12 @@ void set_row(uint8_t r) {
 static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_t b, int brightness) {
     // wybranie wiersza
     set_row(y);
-
     int pixel = 0; //jeśli wykryjemy pixel to pixel = 1
 
     //wybieranie kolumny
     for (int i = 0; i < MATRIX_WIDTH; i++) {
         
         gpio_put(CLK_PIN, 0);
-        // sleep_us(1);
         if (i == x) {  
             gpio_put(R1_PIN, (y < 16) & r); //first part of matrix
             gpio_put(G1_PIN, (y < 16) & g); //first part of matrix
@@ -305,7 +303,6 @@ static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_
             gpio_put(G2_PIN, (y > 15) & g); //second part of matrix
             gpio_put(B2_PIN, (y > 15) & b); //second part of matrix
             pixel = 1;
-            // break;
         } else {
             gpio_put(R1_PIN, 0);
             gpio_put(G1_PIN, 0);
@@ -316,20 +313,15 @@ static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_
         }
         
         gpio_put(CLK_PIN, 1);
-        // sleep_us(1);
     }
     gpio_put(CLK_PIN, 0);
-    // sleep_us(1);
     
     if (pixel) {
         gpio_put(LAT_PIN, 1);
-        sleep_us(1);
-        gpio_put(LAT_PIN, 0);
-        // sleep_us(1);
         gpio_put(OE_PIN, 0);
         sleep_us(brightness);
+        gpio_put(LAT_PIN, 0);
         gpio_put(OE_PIN, 1);
-        // sleep_us(1);
     pixel = 0;
     }   
 }
@@ -344,7 +336,6 @@ static inline void set_two_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, ui
     for (int i = 0; i < MATRIX_WIDTH; i++) {
         
         gpio_put(CLK_PIN, 0);
-        // sleep_us(1);
         if (i == x) {  
             gpio_put(R1_PIN, first_pixel & r); //first part of matrix
             gpio_put(G1_PIN, first_pixel & g); //first part of matrix
@@ -363,20 +354,56 @@ static inline void set_two_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, ui
         }
         
         gpio_put(CLK_PIN, 1);
-        // sleep_us(1);
     }
     gpio_put(CLK_PIN, 0);
-    // sleep_us(1);
     
     if (pixel) {
         gpio_put(LAT_PIN, 1);
-        sleep_us(1);
-        gpio_put(LAT_PIN, 0);
-        // sleep_us(1);
         gpio_put(OE_PIN, 0);
         sleep_us(brightness);
+        gpio_put(LAT_PIN, 0);
         gpio_put(OE_PIN, 1);
-        // sleep_us(1);
+    pixel = 0;
+    }   
+}
+
+static inline void set_two_different_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, uint8_t second_pixel, uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2, int brightness) {
+    // wybranie wiersza
+    set_row(y);
+
+    int pixel = 0; //jeśli wykryjemy pixel to pixel = 1
+
+    //wybieranie kolumny
+    for (int i = 0; i < MATRIX_WIDTH; i++) {
+        
+        gpio_put(CLK_PIN, 0);
+        if (i == x) {  
+            gpio_put(R1_PIN, first_pixel & r1); //first part of matrix
+            gpio_put(G1_PIN, first_pixel & g1); //first part of matrix
+            gpio_put(B1_PIN, first_pixel & b1); //first part of matrix
+            gpio_put(R2_PIN, second_pixel & r2); //second part of matrix
+            gpio_put(G2_PIN, second_pixel & g2); //second part of matrix
+            gpio_put(B2_PIN, second_pixel & b2); //second part of matrix
+            pixel = 1;
+        } else {
+            gpio_put(R1_PIN, 0);
+            gpio_put(G1_PIN, 0);
+            gpio_put(B1_PIN, 0);
+            gpio_put(R2_PIN, 0);
+            gpio_put(G2_PIN, 0);
+            gpio_put(B2_PIN, 0);
+        }
+        
+        gpio_put(CLK_PIN, 1);
+    }
+    gpio_put(CLK_PIN, 0);
+    
+    if (pixel) {
+        gpio_put(LAT_PIN, 1);
+        gpio_put(OE_PIN, 0);
+        sleep_us(brightness);
+        gpio_put(LAT_PIN, 0);
+        gpio_put(OE_PIN, 1);
     pixel = 0;
     }   
 }
@@ -384,11 +411,8 @@ static inline void set_two_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, ui
 
 /*  funkcja wypełnia dany wiersz  */
 void fill_row(int y, uint8_t r, uint8_t g, uint8_t b, int brightness) {
-
+ 
     set_row(y);
-
-    gpio_put(OE_PIN, 1);
-    gpio_put(LAT_PIN, 0);
 
     // Wysłanie danych pikseli do rejestru FM6124
     for (int j = 0; j < MATRIX_WIDTH; j++) {
@@ -399,20 +423,15 @@ void fill_row(int y, uint8_t r, uint8_t g, uint8_t b, int brightness) {
         gpio_put(R2_PIN, (y > 15) & r);
         gpio_put(G2_PIN, (y > 15) & g);
         gpio_put(B2_PIN, (y > 15) & b);
-
-        // sleep_us(1);
         gpio_put(CLK_PIN, 1);
-        // sleep_us(1);
     }
+
     gpio_put(CLK_PIN, 0);
     gpio_put(LAT_PIN, 1);
-    sleep_us(1);
-    gpio_put(LAT_PIN, 0);
-    // sleep_us(1);
     gpio_put(OE_PIN, 0);
     sleep_us(brightness);
+    gpio_put(LAT_PIN, 0);
     gpio_put(OE_PIN, 1);
-    // sleep_us(1);
 }
 
 /*  funkcja wyświetla daną kolumne  */
@@ -433,13 +452,9 @@ void fill_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
 /*  funkcja wyświetla prostokąt w prostokącie   */
 void fill_rect_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
     for (int i = 0; i < MATRIX_HEIGHT; i++) {
-        // Wyłączanie wyjścia matrycy LED
-        gpio_put(OE_PIN, 1);
-
+       
         // Ustawienie wiersza w interfejsie HUB75
         set_row(i);
-
-        gpio_put(LAT_PIN, 0);
 
         // Wysłanie danych pikseli do rejestru FM6124
         for (int j = 0; j < MATRIX_WIDTH; j++) {
@@ -451,22 +466,17 @@ void fill_rect_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
         gpio_put(G2_PIN, (i > 15) & ((i < 20) && (j < 35)) & g);
         gpio_put(B2_PIN, (i > 15) & (((i < MATRIX_HEIGHT && j < MATRIX_WIDTH)  && i > 19) | (i < 20 && j > 34)) & b);
 
-        // sleep_us(1);
         gpio_put(CLK_PIN, 1);
-        // sleep_us(1);
         }
 
 
         // Przesłanie danych z rejestru FM6124 do matrycy LED
         gpio_put(CLK_PIN, 0);
         gpio_put(LAT_PIN, 1);
-        sleep_us(1);
-        gpio_put(LAT_PIN, 0);
-        // sleep_us(1);
         gpio_put(OE_PIN, 0);
         sleep_us(brightness);
+        gpio_put(LAT_PIN, 0);
         gpio_put(OE_PIN, 1);
-        // sleep_us(1);
     }
 }
 
@@ -474,28 +484,17 @@ void fill_rect_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
 /* funkcja wyświetla matrycę podzieloną na trójkąty [\/] */
 void fill_rgb_matrix(int brightness) {     
 
-    for (int i = 0; i < MATRIX_HEIGHT; i++) {
-        
-        for (int j = 0; j < (i + 1); j++) {
-            set_pixel(j,i,1,0,0, brightness);
-            set_pixel(63 - j,i,0,0,1, brightness);
-        }
-        
-        for (int j = i; j < (63 - i); j++) {
-            set_pixel(j,i,0,1,0, brightness);
+    // for (int i = 0; i < MATRIX_HEIGHT; i++) {
+    //     for (int j = 0; j < MATRIX_WIDTH; j++) {
+    //         set_pixel(j, i,(j < i + 1), ((j >= i + 1) && (j <= (MATRIX_WIDTH - i - 2))), (j > (MATRIX_WIDTH - i - 2)), brightness);
+    //     }
+    // }
+    for (int i = 0; i < MATRIX_HEIGHT/2; i++) {
+        for (int j = 0; j < MATRIX_WIDTH; j++) {
+            set_two_different_pixels(j, i, 1,1, (j < i + 1), ((j >= i + 1) && (j < (MATRIX_WIDTH - i - 1))), (j > (MATRIX_WIDTH - i - 2)), 
+                                            (j < i + 1 + 16), ((j > i + 16) && (j < (MATRIX_WIDTH - i - 17))), (j > (MATRIX_WIDTH - i - 18)), brightness);
         }
     }
-
-    // Przesłanie danych z rejestru FM6124 do matrycy LED
-    gpio_put(CLK_PIN, 0);
-    gpio_put(LAT_PIN, 1);
-    sleep_us(1);
-    gpio_put(LAT_PIN, 0);
-    // sleep_us(1);
-    gpio_put(OE_PIN, 0);
-    sleep_us(brightness);
-    gpio_put(OE_PIN, 1);
-    // sleep_us(1);
 }
 
 
@@ -526,12 +525,9 @@ void animation(int speed, int brightness) {
 
 
 // Funkcja do wysyłania bufora ramki do matrycy LED __ raczej nieużywana, tutaj wyświetla wypełnioną matrycę takim wzorkiem
-void send_frame() {   
+void send_frame(int brightness) {   
 
     for (int i = 0; i < MATRIX_HEIGHT / 2; i++) {
-        
-        // Wyłączanie wyjścia matrycy LED
-        gpio_put(OE_PIN, 1);
         
         // Ustawienie wiersza w interfejsie HUB75
         set_row(i);
@@ -541,10 +537,8 @@ void send_frame() {
         // gpio_put(C_PIN, (i >> 2) & 1);
         // gpio_put(D_PIN, (i >> 3) & 1);
 
-        gpio_put(LAT_PIN, 0);
-
         // Wysłanie danych pikseli do rejestru FM6124
-        uint16_t pixels = pixel_buffer[i];
+        // uint16_t pixels = pixel_buffer[i];
         for (int j = 0; j < 64; j++) {
         gpio_put(CLK_PIN, 0);
         gpio_put(R1_PIN, (j+1)%2);
@@ -553,29 +547,17 @@ void send_frame() {
         gpio_put(R2_PIN, (i+1)%2);
         gpio_put(G2_PIN, i%2);
         gpio_put(B2_PIN, 0);
-        
-        sleep_us(1);
         gpio_put(CLK_PIN, 1);
-        sleep_us(1);
         }
 
+        // Przesłanie danych z rejestru FM6124 do matrycy LED
+        gpio_put(CLK_PIN, 0);
+        gpio_put(LAT_PIN, 1);
+        gpio_put(OE_PIN, 0);
+        sleep_us(brightness);
+        gpio_put(LAT_PIN, 0);
+        gpio_put(OE_PIN, 1);
 
-    // Przesłanie danych z rejestru FM6124 do matrycy LED
-    gpio_put(CLK_PIN, 0);
-    gpio_put(LAT_PIN, 1);
-    sleep_us(1);
-
-    // Włączenie wyjścia matrycy LED
-    gpio_put(OE_PIN, 0);
-    sleep_us(1);
-    gpio_put(CLK_PIN, 1);
-    sleep_us(0);
-
-
-    gpio_put(LAT_PIN, 0);
-    gpio_put(OE_PIN, 1);
-    gpio_put(CLK_PIN, 0);
-    sleep_us(10);
     }
 }
 
@@ -587,7 +569,6 @@ void send_picture(const unsigned short *picture, uint8_t r, uint8_t g, uint8_t b
 			if (*p != 0) {
 				set_pixel(j, i, r, g, b, brightness);
 			}
-			// set_pixel(i, j, r & *p, g & *p, b & *p, brightness);
 			*p++;
 		}
 	}
@@ -600,7 +581,7 @@ void send_picture_two_pixels(const unsigned short *picture, uint8_t r, uint8_t g
 	for (int i = 0; i < MATRIX_HEIGHT/2; i++) {
 		for (int j = 0; j < MATRIX_WIDTH; j++) {
             if ((*p_top != 0) | (*p_down != 0)) {
-                set_two_pixels(j, i, ((*p_top > 0) ? 1 : 0), ((*p_down > 0) ? 1 : 0), r, g, b, brightness);
+                set_two_pixels(j, i, (*p_top ? 1 : 0), (*p_down ? 1 : 0), r, g, b, brightness);
             }
 			*p_top++;
             *p_down++;
@@ -624,7 +605,7 @@ void picture_animation(uint8_t r, uint8_t g, uint8_t b, int brightness) {
 	}
 }
 
-/*  funkcja wyśweitla kilka obrazków w odstępie ki;lku sekund   */
+/*  funkcja wyśweitla kilka obrazków w odstępie kilku sekund zaświetlając dwa piksele na raz  */
 void picture_animation_two_pixels(uint8_t r, uint8_t g, uint8_t b, int brightness) {
 	for (int i = 0; i < 500; i++) {
 		send_picture_two_pixels(RedHeart, 1, 0, 0, brightness);
@@ -636,7 +617,7 @@ void picture_animation_two_pixels(uint8_t r, uint8_t g, uint8_t b, int brightnes
 		send_picture_two_pixels(YellowStar, 1, 0, 0, brightness);
 	}
 	for (int i = 0; i < 200; i++) {
-		send_picture_two_pixels(surface, 1, 0, 0, 10);
+		send_picture_two_pixels(surface, 1, 0, 0, 15);
 	}
 }
 
@@ -652,19 +633,18 @@ int main() {
     // Przykładowy kod do generowania obrazu na matrycy LED
     while (true) {
         
-
-        // set_pixel(24, 12, 0, 0, 1, 100);         // wyświetlanie piksela
-        // fill_row(3, 1, 0, 0, 100);               // wyświetlanie wiersza
-        // fill_column(30, 1, 0, 0, 100);           // wyświetlanie kolumny
-        // fill_matrix(1,0,0,200);                  // wypełnianie matrycy
-        // fill_rect_matrix(1,1,1,100);             // wyświetla prostokąt w prostokącie
-        // fill_rgb_matrix(5);                      // to wyświetla trójkątny wzorek
-        // animation(30, 200);                      // to animacja taka z przesuwającą się kolumną i wierszem
-        // send_frame();                            // to taki wzorek
-        // picture_animation(0, 0, 1, 50);          // a to obrazki wyświetlane co chwile
-        // set_two_pixels(20, 17, 0, 0, 1,0,0,100);
-        // send_picture_two_pixels(RedHeart, 1, 0, 0, 50);
-        picture_animation_two_pixels(0, 0, 1, 60);
+        // set_pixel(24, 12, 1, 0, 0, 100);                 // wyświetlanie piksela
+        // fill_row(30, 1, 0, 0, 100);                      // wyświetlanie wiersza
+        // fill_column(20, 1, 0, 0, 500);                   // wyświetlanie kolumny
+        // fill_matrix(1,1,1,500);                          // wypełnianie matrycy
+        // fill_rect_matrix(1,1,1,300);                     // wyświetla prostokąt w prostokącie
+        // fill_rgb_matrix(10);                             // to wyświetla trójkątny wzorek
+        animation(20, 300);                                 // to animacja taka z przesuwającą się kolumną i wierszem
+        // send_frame(300);                                 // to taki wzorek
+        // picture_animation(0, 0, 1, 50);                  // a to obrazki wyświetlane co chwile
+        // set_two_pixels(12, 12, 1, 1, 1,0,0,100);         // wyświetla dwa piksele jednakowe
+        // picture_animation_two_pixels(0, 0, 1, 60);       // obrazki używając funkcji z dwoma pikselami
+        // set_two_different_pixels(20,17, 1, 1, 1,0,0, 0,1,0, 100);    //zaświeca dwa różne piksle
 
     }
     return 0;

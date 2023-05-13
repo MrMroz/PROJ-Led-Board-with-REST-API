@@ -31,6 +31,7 @@ static inline void led_matrix_init();
 void set_row(uint8_t r);
 static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_t b, int brightness);
 static inline void set_two_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, uint8_t second_pixel, uint8_t r, uint8_t g, uint8_t b, int brightness);
+static inline void set_two_different_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, uint8_t second_pixel, uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2, int brightness);
 void fill_row(int y, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void fill_column(int x, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void fill_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness);
