@@ -53,7 +53,10 @@ static inline void led_matrix_init() {
 	gpio_put(CLK_PIN, 0);
 }
 
-
+static inline void clock() {
+    gpio_put(CLK_PIN, 0);
+    gpio_put(CLK_PIN, 1);
+}
 
 /*
 At first, you select a line to draw to via the 4 line select pins. They are in binary, 
@@ -295,6 +298,8 @@ static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_
     for (int i = 0; i < MATRIX_WIDTH; i++) {
         
         gpio_put(CLK_PIN, 0);
+
+
         if (i == x) {  
             gpio_put(R1_PIN, (y < 16) & r); //first part of matrix
             gpio_put(G1_PIN, (y < 16) & g); //first part of matrix
@@ -314,7 +319,7 @@ static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_
         
         gpio_put(CLK_PIN, 1);
     }
-    gpio_put(CLK_PIN, 0);
+    // gpio_put(CLK_PIN, 0);
     
     if (pixel) {
         gpio_put(LAT_PIN, 1);
@@ -355,7 +360,7 @@ static inline void set_two_pixels (uint8_t x, uint8_t y, uint8_t first_pixel, ui
         
         gpio_put(CLK_PIN, 1);
     }
-    gpio_put(CLK_PIN, 0);
+    // gpio_put(CLK_PIN, 0);
     
     if (pixel) {
         gpio_put(LAT_PIN, 1);
@@ -377,6 +382,7 @@ static inline void set_two_different_pixels (uint8_t x, uint8_t y, uint8_t first
     for (int i = 0; i < MATRIX_WIDTH; i++) {
         
         gpio_put(CLK_PIN, 0);
+
         if (i == x) {  
             gpio_put(R1_PIN, first_pixel & r1); //first part of matrix
             gpio_put(G1_PIN, first_pixel & g1); //first part of matrix
@@ -396,7 +402,7 @@ static inline void set_two_different_pixels (uint8_t x, uint8_t y, uint8_t first
         
         gpio_put(CLK_PIN, 1);
     }
-    gpio_put(CLK_PIN, 0);
+    // gpio_put(CLK_PIN, 0);
     
     if (pixel) {
         gpio_put(LAT_PIN, 1);
@@ -426,7 +432,7 @@ void fill_row(int y, uint8_t r, uint8_t g, uint8_t b, int brightness) {
         gpio_put(CLK_PIN, 1);
     }
 
-    gpio_put(CLK_PIN, 0);
+    // gpio_put(CLK_PIN, 0);
     gpio_put(LAT_PIN, 1);
     gpio_put(OE_PIN, 0);
     sleep_us(brightness);
@@ -471,7 +477,7 @@ void fill_rect_matrix(uint8_t r, uint8_t g, uint8_t b, int brightness) {
 
 
         // Przesłanie danych z rejestru FM6124 do matrycy LED
-        gpio_put(CLK_PIN, 0);
+        // gpio_put(CLK_PIN, 0);
         gpio_put(LAT_PIN, 1);
         gpio_put(OE_PIN, 0);
         sleep_us(brightness);
@@ -551,7 +557,7 @@ void send_frame(int brightness) {
         }
 
         // Przesłanie danych z rejestru FM6124 do matrycy LED
-        gpio_put(CLK_PIN, 0);
+        // gpio_put(CLK_PIN, 0);
         gpio_put(LAT_PIN, 1);
         gpio_put(OE_PIN, 0);
         sleep_us(brightness);
@@ -592,32 +598,32 @@ void send_picture_two_pixels(const unsigned short *picture, uint8_t r, uint8_t g
 /*  funkcja wyśweitla kilka obrazków w odstępie ki;lku sekund   */
 void picture_animation(uint8_t r, uint8_t g, uint8_t b, int brightness) {
 	for (int i = 0; i < 500; i++) {
-		send_picture(RedHeart, 1, 0, 0, brightness);
+		send_picture(RedHeart, r, g, b, brightness);
 	}
 	for (int i = 0; i < 800; i++) {
-		send_picture(Moon, 1, 0, 0, brightness);
+		send_picture(Moon, r, g, b, brightness);
 	}
 	for (int i = 0; i < 500; i++) {
-		send_picture(YellowStar, 1, 0, 0, brightness);
+		send_picture(YellowStar, r, g, b, brightness);
 	}
 	for (int i = 0; i < 200; i++) {
-		send_picture(surface, 1, 0, 0, 10);
+		send_picture(surface, r, g, b, 10);
 	}
 }
 
 /*  funkcja wyśweitla kilka obrazków w odstępie kilku sekund zaświetlając dwa piksele na raz  */
 void picture_animation_two_pixels(uint8_t r, uint8_t g, uint8_t b, int brightness) {
 	for (int i = 0; i < 500; i++) {
-		send_picture_two_pixels(RedHeart, 1, 0, 0, brightness);
+		send_picture_two_pixels(RedHeart, r, g, b, brightness);
 	}
 	for (int i = 0; i < 800; i++) {
-		send_picture_two_pixels(Moon, 1, 0, 0, brightness);
+		send_picture_two_pixels(Moon, r, g, b, brightness);
 	}
 	for (int i = 0; i < 500; i++) {
-		send_picture_two_pixels(YellowStar, 1, 0, 0, brightness);
+		send_picture_two_pixels(YellowStar, r, g, b, brightness);
 	}
 	for (int i = 0; i < 200; i++) {
-		send_picture_two_pixels(surface, 1, 0, 0, 15);
+		send_picture_two_pixels(surface, r, g, b, 15);
 	}
 }
 
@@ -629,21 +635,22 @@ int main() {
 
     stdio_init_all();
     led_matrix_init();
-
+    set_sys_clock_khz(200000, false);
     // Przykładowy kod do generowania obrazu na matrycy LED
     while (true) {
+        // clock();
         
         // set_pixel(24, 12, 1, 0, 0, 100);                 // wyświetlanie piksela
         // fill_row(30, 1, 0, 0, 100);                      // wyświetlanie wiersza
         // fill_column(20, 1, 0, 0, 500);                   // wyświetlanie kolumny
-        // fill_matrix(1,1,1,500);                          // wypełnianie matrycy
+        // fill_matrix(1,0,0,500);                          // wypełnianie matrycy
         // fill_rect_matrix(1,1,1,300);                     // wyświetla prostokąt w prostokącie
-        // fill_rgb_matrix(10);                             // to wyświetla trójkątny wzorek
-        animation(20, 300);                                 // to animacja taka z przesuwającą się kolumną i wierszem
+        fill_rgb_matrix(15);                             // to wyświetla trójkątny wzorek
+        // animation(20, 300);                                 // to animacja taka z przesuwającą się kolumną i wierszem
         // send_frame(300);                                 // to taki wzorek
         // picture_animation(0, 0, 1, 50);                  // a to obrazki wyświetlane co chwile
         // set_two_pixels(12, 12, 1, 1, 1,0,0,100);         // wyświetla dwa piksele jednakowe
-        // picture_animation_two_pixels(0, 0, 1, 60);       // obrazki używając funkcji z dwoma pikselami
+        // picture_animation_two_pixels(1, 0, 0, 60);       // obrazki używając funkcji z dwoma pikselami
         // set_two_different_pixels(20,17, 1, 1, 1,0,0, 0,1,0, 100);    //zaświeca dwa różne piksle
 
     }
