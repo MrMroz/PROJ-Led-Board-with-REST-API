@@ -43,6 +43,6 @@ void send_frame();
 void send_picture(const unsigned short *picture, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void send_picture_two_pixels(const unsigned short *picture, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void picture_animation(uint8_t r, uint8_t g, uint8_t b, int brightness);
-void picture_animation_two_pixels(uint8_t r, uint8_t g, uint8_t b, int brightness);
+void picture_animation_two_pixels(uint8_t r, uint8_t g, uint8_t b, int speed, int brightness);
 
 #endif
