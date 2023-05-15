@@ -1,0 +1,25 @@
+- server:
+    - custom:
+        path: /blank
+        methods:
+            - PUT
+    - custom:
+        path: /heart
+        methods:
+            - PUT
+    - custom:
+        path: /moon
+        methods:
+            - PUT
+    - custom:
+        path: /star
+        methods: 
+            - PUT
+    - custom:
+        path: /surface
+        methods:
+            - PUT
+    - custom:
+        path: /triangles
+        methods:
+            - PUT
