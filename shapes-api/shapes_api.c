@@ -135,7 +135,7 @@ void send_triangles(int brightness) {
 }
 
 void core1_led_controller() {
-	bool did_receive = False;
+	bool did_receive = false;
 	uint8_t request = 0;
 	// 0 - brak
 	// 1 - heart
@@ -149,7 +149,7 @@ void core1_led_controller() {
 
 		switch(request) {
 			case 0:
-				sleep_us(1)
+				sleep_us(1);
 			case 1:
 				send_picture(RedHeart, 1, 0, 0, 50);
 			case 2:

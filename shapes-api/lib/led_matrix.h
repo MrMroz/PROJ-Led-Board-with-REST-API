@@ -28,7 +28,6 @@
 #define MATRIX_WIDTH 64
 
 static inline void led_matrix_init();
-static inline void clock();
 void set_row(uint8_t r);
 static inline void set_pixel (uint8_t x, uint8_t y, uint8_t r, uint8_t g, uint8_t b, int brightness);
 void send_picture(const unsigned short *picture, uint8_t r, uint8_t g, uint8_t b, int brightness);
