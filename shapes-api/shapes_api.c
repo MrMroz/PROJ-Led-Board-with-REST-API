@@ -150,16 +150,24 @@ void core1_led_controller() {
 		switch(request) {
 			case 0:
 				sleep_us(1);
+				break;
 			case 1:
 				send_picture(RedHeart, 1, 0, 0, 50);
+				break;
 			case 2:
 				send_picture(Moon, 0, 0, 1, 50);
+				break;
 			case 3:
 				send_picture(YellowStar, 1, 1, 0, 50);
+				break;
 			case 4:
 				send_picture(surface, 1, 0, 0, 10);
+				break;
 			case 5:
 				send_triangles(15);
+				break;
+			default:
+				sleep_us(10);
 		}
 	}
 }
@@ -206,7 +214,7 @@ int main() {
 
 	printf("Registering PUT /blank\n");
 	
-	if ((err = register_hndlr_methods(&cfg, "/blank", blank_handler,
+	if ((err = register_hndlr(&cfg, "/blank", blank_handler,
 					  HTTP_METHOD_PUT, &queue))
 	    != ERR_OK) {
 		HTTP_LOG_ERROR("Register /blank: %d", err);
@@ -216,7 +224,7 @@ int main() {
 	
 	printf("Registering PUT /heart\n");
 	
-	if ((err = register_hndlr_methods(&cfg, "/heart", heart_handler,
+	if ((err = register_hndlr(&cfg, "/heart", heart_handler,
 					  HTTP_METHOD_PUT, &queue))
 	    != ERR_OK) {
 		HTTP_LOG_ERROR("Register /heart: %d", err);
@@ -225,7 +233,7 @@ int main() {
 
 	printf("Registering PUT /moon\n");
 	
-	if ((err = register_hndlr_methods(&cfg, "/moon", moon_handler,
+	if ((err = register_hndlr(&cfg, "/moon", moon_handler,
 					  HTTP_METHOD_PUT, &queue))
 	    != ERR_OK) {
 		HTTP_LOG_ERROR("Register /moon: %d", err);
@@ -234,7 +242,7 @@ int main() {
 	
 	printf("Registering PUT /star\n");
 	
-	if ((err = register_hndlr_methods(&cfg, "/star", star_handler,
+	if ((err = register_hndlr(&cfg, "/star", star_handler,
 					  HTTP_METHOD_PUT, &queue))
 	    != ERR_OK) {
 		HTTP_LOG_ERROR("Register /star: %d", err);
@@ -243,7 +251,7 @@ int main() {
 
 	printf("Registering PUT /surface\n");
 	
-	if ((err = register_hndlr_methods(&cfg, "/surface", surface_handler,
+	if ((err = register_hndlr(&cfg, "/surface", surface_handler,
 					  HTTP_METHOD_PUT, &queue))
 	    != ERR_OK) {
 		HTTP_LOG_ERROR("Register /surface: %d", err);
@@ -252,7 +260,7 @@ int main() {
 
 	printf("Registering PUT /triangles\n");
 	
-	if ((err = register_hndlr_methods(&cfg, "/triangles", triangles_handler,
+	if ((err = register_hndlr(&cfg, "/triangles", triangles_handler,
 					  HTTP_METHOD_PUT, &queue))
 	    != ERR_OK) {
 		HTTP_LOG_ERROR("Register /triangles: %d", err);
