@@ -9,7 +9,7 @@
 
 #define uint8_t unsigned char
 
-
+uint8_t mx[32][64];
 
 // Inicjalizacja pinów GPIO
 static inline void led_matrix_init() {
@@ -180,7 +180,7 @@ void rotate(uint8_t *arr, int n, bool rev) {
 			tmp = arr[0];
 
 			for(int i = 1; i < n; i++) {
-			   arr[i - 1] = arr[i];
+				arr[i - 1] = arr[i];
 			}
 
 			arr[n - 1] = tmp;
@@ -191,12 +191,124 @@ void rotate(uint8_t *arr, int n, bool rev) {
 			tmp = arr[n-1];
 
 			for(int i = (n-2); i >= 0; i--) {
-			   arr[i + 1] = arr[i];
+				arr[i + 1] = arr[i];
 			}
 
 			arr[0] = tmp;
 			
 			break;
+	}
+}
+
+// (r r r g g g b b)
+// threshold 0-7
+inline static void redraw_128(uint8_t row_num, uint8_t threshold) {
+	set_row(row_num);
+	
+	for(int i = 0; i < MATRIX_WIDTH; i++) {
+		gpio_put(CLK_PIN, 0);
+
+		gpio_put(R1_PIN, (mx[row_num][i] >> 5) > threshold);
+		gpio_put(G1_PIN, ((mx[row_num][i] >> 2) & 0x7) > threshold);
+		gpio_put(B1_PIN, (mx[row_num][i] & 0x3) > threshold);
+		
+		gpio_put(R2_PIN, (mx[row_num+16][i] >> 5) > threshold);
+		gpio_put(G2_PIN, ((mx[row_num+16][i] >> 2) & 0x7) > threshold);
+		gpio_put(B2_PIN, (mx[row_num+16][i] & 0x3) > threshold);
+
+		gpio_put(CLK_PIN, 1);
+		}
+	
+	gpio_put(LAT_PIN, 1);
+	gpio_put(OE_PIN, 0);
+	sleep_us(50);
+	gpio_put(LAT_PIN, 0);
+	gpio_put(OE_PIN, 1);
+}
+
+inline static void full_redraw() {
+	for(uint8_t k = 0; k < 7; k++) {
+		for(uint8_t i = 0; i < (MATRIX_HEIGHT/2); i++) {
+			redraw_128(i, k);
+		}
+	}
+}
+
+inline static void swap_mx_color(uint8_t c) {
+	for(int i = 0; i < 32; i++) {
+		for(int k = 0; k < 64; k++) {
+			mx[i][k] = c;
+		}
+	}
+}
+
+
+
+// rgb -> r - 0, g - 1, b - 0;
+inline static uint8_t cex(uint8_t color, uint8_t rgb) {
+	switch(rgb) {
+		case 0: //r
+			return (color >> 5) & 0x7;
+			break;
+		case 1: //g
+			return (color >> 2) & 0x7;
+			break;
+		case 2: //b
+			return (color & 0x3);
+			break;
+	}
+}
+
+
+// uint8  (r r r g g g b b)
+// 7, 0, 0 -> state 1
+// 7, 7, 0 -> state 2
+// 0, 7, 0 -> state 3
+// 0, 7, 3 -> state 4
+// 0, 0, 3 -> state 5
+// 7, 0, 3 -> state 6
+// 7, 0, 0 -> state 1
+uint8_t spectrum_cycle(uint8_t c) {
+	uint8_t state;
+
+	if((cex(c, 0) == 7) && (cex(c, 1) < 7)) {state = 1;}
+	else if((cex(c, 0) > 0) && (cex(c, 1) == 7)) {state = 2;}
+	else if((cex(c, 1) == 7) && (cex(c, 2) < 3)) {state = 3;}
+	else if((cex(c, 1) > 0) && (cex(c, 2) == 3)) {state = 4;}
+	else if((cex(c, 0) < 7) && (cex(c, 2) == 3)) {state = 5;}
+	else if((cex(c, 0) == 7) && (cex(c, 2) > 0)) {state = 6;}
+
+	switch (state) {
+		case 1:
+			return c + 0b00000100;
+			break;
+		case 2:
+			return c - 0b00100000;
+			break;
+		case 3:
+			return c + 0b00000001;
+			break;
+		case 4:
+			return c - 0b00000100;
+			break;
+		case 5:
+			return c + 0b00100000;
+			break;
+		case 6:
+			return c - 0b00000001;
+			break;
+		default:
+			return 0b11100000;
+	}
+}
+
+void vertical_spectrum() {
+	uint8_t vc;
+	for(int i = 0; i < 32; i++) {
+		vc = spectrum_cycle(mx[i][0]);
+		for(int k = 0; k < 64; k++) {
+			mx[i][k] = vc;
+		}
 	}
 }
 
@@ -213,8 +325,8 @@ int main() {
 	printf("WiFi init\n");
     
     if (cyw43_arch_init()) {
-    	printf("WiFi init failed!\n");
-    	return -1;
+		printf("WiFi init failed!\n");
+		return -1;
 	}
 
 	printf("GPIO init\n");
@@ -224,42 +336,57 @@ int main() {
 	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
 	set_row(0);
 	
-	uint8_t  c[64] = 	{0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-				0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2,
-				0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3,
-				0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4,
-				0x5, 0x5, 0x5, 0x5, 0x5, 0x5, 0x5, 0x5, 0x5,
-				0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x6,
-				0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
-				0x7};
+	// uint8_t  c[64] = 	{0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
+	// 			0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2,
+	// 			0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3,
+	// 			0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4,
+	// 			0x5, 0x5, 0x5, 0x5, 0x5, 0x5, 0x5, 0x5, 0x5,
+	// 			0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x6,
+	// 			0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
+	// 			0x7};
 				
-	uint8_t full[32][64];
+	// uint8_t full[32][64];
 	
+	uint8_t init_c = 0b11100000;
 	for(int i = 0; i < 32; i++) {
 		for(int k = 0; k < 64; k++) {
-			full[i][k] = c[k];
+			mx[i][k] = init_c;
 		}
+		init_c = spectrum_cycle(init_c);
 	}
 	
-	int cnt = 0;
-	int cnt_max = 20;
+	// int cnt = 0;
+	// int cnt_max = 20;
+	// for(;;) {
+	// 	for(int i = 0; i < MATRIX_HEIGHT; i++) {
+	// 		load_row(full[i], i);
+	// 	}
+	// 	cnt++;
+	// 	if(cnt >= cnt_max) {
+	// 		for(int l = 0; l < 8; l++){
+	// 			for(int n = 0; n < 4; n++){
+	// 				rotate(full[4*l + n], 64, ((l%2)==1));	
+	// 			}
+
+	// 		}
+	// 		cnt = 0;
+
+	// 	}
+	// }
+
+	uint8_t c = 0b11100000;
+	uint8_t cnt = 0;
 	for(;;) {
-		for(int i = 0; i < MATRIX_HEIGHT; i++) {
-			load_row(full[i], i);
-		}
+		full_redraw();
 		cnt++;
-		if(cnt >= cnt_max) {
-			for(int l = 0; l < 8; l++){
-				for(int n = 0; n < 4; n++){
-					rotate(full[4*l + n], 64, ((l%2)==1));	
-				}
 
-			}
+		if(cnt >= 10) {
 			cnt = 0;
-
+			// c = spectrum_cycle(c);
+			// swap_mx_color(c);
+			vertical_spectrum();
 		}
 	}
-
 
 	return 0;
 }
