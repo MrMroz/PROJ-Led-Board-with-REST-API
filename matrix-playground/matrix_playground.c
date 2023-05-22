@@ -247,6 +247,114 @@ void spectrum_anim(uint16_t loops, uint8_t speed) {
 	swap_mx_color(0); // Wyczyszczenie tablicy
 }
 
+void scrolling_text(char *text, uint8_t speed) {
+	swap_mx_color(0); // Wyczyszczenie tablicy
+	uint8_t cnt = 0;
+	uint8_t cnt_max = UINT8_MAX - speed;
+	short steps_to_end = strlen(text)*19 + 64;
+	uint8_t colcnt = 0;
+	
+	while(steps_to_end > 0) {
+		redraw_full();
+		cnt++;
+		
+		if(cnt >= cnt_max) {
+			full_shift(false, false);
+			steps_to_end--;
+			
+			switch(*text) {
+				case 'A':
+					load_right(A, colcnt);
+					break;
+				case 'B':
+					load_right(B, colcnt);
+					break;
+				case 'C':
+					load_right(C, colcnt);
+					break;
+				case 'D':
+					load_right(D, colcnt);
+					break;
+				case 'E':
+					load_right(E, colcnt);
+					break;
+				case 'F':
+					load_right(F, colcnt);
+					break;
+				case 'G':
+					load_right(G, colcnt);
+					break;
+				case 'H':
+					load_right(H, colcnt);
+					break;
+				case 'I':
+					load_right(I, colcnt);
+					break;
+				case 'J':
+					load_right(J, colcnt);
+					break;
+				case 'K':
+					load_right(K, colcnt);
+					break;
+				case 'L':
+					load_right(L, colcnt);
+					break;
+				case 'M':
+					load_right(M, colcnt);
+					break;
+				case 'N':
+					load_right(N, colcnt);
+					break;
+				case 'O':
+					load_right(O, colcnt);
+					break;
+				case 'P':
+					load_right(P, colcnt);
+					break;
+				// case 'Q':
+				// 	load_right(Q, colcnt);
+				// 	break;
+				case 'R':
+					load_right(R, colcnt);
+					break;
+				case 'S':
+					load_right(S, colcnt);
+					break;
+				case 'T':
+					load_right(T, colcnt);
+					break;
+				case 'U':
+					load_right(U, colcnt);
+					break;
+				case 'V':
+					load_right(V, colcnt);
+					break;
+				// case 'W':
+				// 	load_right(W, colcnt);
+				// 	break;
+				case 'X':
+					load_right(X, colcnt);
+					break;
+				case 'Y':
+					load_right(Y, colcnt);
+					break;
+				case 'Z':
+					load_right(Z, colcnt);
+					break;
+			}
+
+
+			colcnt++;
+			if(colcnt >= 19) {
+				colcnt = 0;
+				text++;
+			}
+		cnt = 0;
+		}
+	}
+	swap_mx_color(0); // Wyczyszczenie tablicy
+}
+
 int main() {
 	stdio_init_all();
 
@@ -269,26 +377,10 @@ int main() {
 	// Dioda - koniec inicjalizacji
 	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
 
-	spectrum_anim(1000, 250);
+	spectrum_anim(200, 250);
 	
-	uint8_t cnt = 0;
-	uint8_t colcnt = 0;
-	for(;;) {
-		redraw_full();
-		cnt++;
-		
-		if(cnt >= 10) {
-			full_shift(false, false);
-			load_right(A, colcnt);
+	scrolling_text("LEDZIAKI",252);
 
-			colcnt++;
-			if(colcnt >= 19) {
-				colcnt = 0;
-			}
-		cnt = 0;
-		}
-
-	}
-
+	spectrum_anim(200, 250);
 	return 0;
 }
