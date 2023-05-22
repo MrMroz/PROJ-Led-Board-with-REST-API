@@ -7,7 +7,7 @@ from sys import exit
 BASE_DIR = os.getcwd()
 OUT_DIR = os.path.join(BASE_DIR, "output")
 IN_DIR = os.path.join(BASE_DIR, "input")
-TEMPLATE = "uint8_t <NAME>[32][19] = {"
+TEMPLATE = "\nuint8_t <NAME>[32][19] = {"
 
 terminate = False
 if not os.path.exists(IN_DIR):
@@ -47,9 +47,10 @@ with open(out_pth('all.txt'), mode='w', encoding='utf-8') as out_f:
                     else:
                         out += '0x00, '
                 out = out[:-2]
-                out += '}'
-
-            out += '\n\t\t\t\t\t}'
+                out += '},'
+            
+            out = out[:-1]
+            out += '\n\t\t\t\t\t};'
 
             f.write(out)
         out_f.write(out+'\n')
