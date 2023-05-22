@@ -1,44 +1,55 @@
 import cv2
 import os
 import np
+from sys import exit
 
 
-OUT_DIR = os.path.join(os.getcwd(), "output")
-IN_DIR = os.path.join(os.getcwd(), "input")
+BASE_DIR = os.getcwd()
+OUT_DIR = os.path.join(BASE_DIR, "output")
+IN_DIR = os.path.join(BASE_DIR, "input")
+TEMPLATE = "uint8_t <NAME>[32][19] = {"
+
+terminate = False
+if not os.path.exists(IN_DIR):
+    os.makedirs(IN_DIR)
+    terminate = True
+
+if not os.path.exists(OUT_DIR):
+    os.makedirs(OUT_DIR)
+    terminate = True
+
+if terminate:
+    exit()
 
 def in_pth(img_name: str) -> str:
     return os.path.join(IN_DIR, img_name)
 
-img = cv2.imread(in_pth('A.png'), -1)
-img.astype(np.uint8)
-# img = cv2.cvtColor(img, cv2.COLOR_B)
+def out_pth(img_name: str) -> str:
+    return os.path.join(OUT_DIR, img_name)
 
-#img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-# with open('A.txt', mode='w') as f:
-#     for s in img:
-#         f.write(str(s))
-
-
-print(len(img))
-print(len(img[0]))
-print(len(img[0][0]))
-
-TEMPLATE = "uint8_t A[19][64] = {"
-
-out = TEMPLATE
-
-for row in img:
-    out += '\n  '
-    for pixel in row:
-        if pixel[3] == 255:
-            out += '0xFF, '
-        else:
-            out += '0x00, '
+with open(out_pth('all.txt'), mode='w', encoding='utf-8') as out_f:
+    for in_file in os.listdir(IN_DIR):
+        if not in_file.endswith(".png"):
+            continue
         
+        name: str = in_file.replace('.png', '')
+        with open(out_pth(name + '.txt'), mode='w', encoding='utf-8') as f:
+            img = cv2.imread(in_pth(in_file), -1)
+            img.astype(np.uint8)
 
-out = out[:-2]
+            out = TEMPLATE.replace('<NAME>', name)
 
-out += '}'
+            for row in img:
+                out += '\n\t\t\t\t\t\t  {'
+                for pixel in row:
+                    if pixel[3] >= 200:
+                        out += '0xFF, '
+                    else:
+                        out += '0x00, '
+                out = out[:-2]
+                out += '}'
 
-with open('A.txt', mode='w', encoding='utf-8') as f:
-    f.write(out)
+            out += '\n\t\t\t\t\t}'
+
+            f.write(out)
+        out_f.write(out+'\n')
