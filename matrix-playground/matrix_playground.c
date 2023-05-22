@@ -211,7 +211,6 @@ void vertical_spectrum() {
 }
 
 void spectrum_anim(uint16_t loops, uint8_t speed) {
-	uint8_t c = 0b11100000;
 	uint8_t cnt = 0;
 	uint8_t cnt_max = UINT8_MAX - speed;
 
@@ -228,7 +227,7 @@ void spectrum_anim(uint16_t loops, uint8_t speed) {
 			redraw_full();
 			cnt++;
 
-			if(cnt >= 10) {
+			if(cnt >= cnt_max) {
 				cnt = 0;
 				vertical_spectrum();
 			}
@@ -238,7 +237,7 @@ void spectrum_anim(uint16_t loops, uint8_t speed) {
 			redraw_full();
 			cnt++;
 
-			if(cnt >= 10) {
+			if(cnt >= cnt_max) {
 				cnt = 0;
 				vertical_spectrum();
 			}
@@ -270,16 +269,15 @@ int main() {
 	// Dioda - koniec inicjalizacji
 	cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
 
-	spectrum_anim(10000, 10);
+	spectrum_anim(1000, 250);
 	
 	uint8_t cnt = 0;
 	uint8_t colcnt = 0;
 	for(;;) {
 		redraw_full();
-	();
-		cnt2++;
+		cnt++;
 		
-		if(cnt2 >= 10) {
+		if(cnt >= 10) {
 			full_shift(false, false);
 			load_right(A, colcnt);
 
@@ -287,7 +285,7 @@ int main() {
 			if(colcnt >= 19) {
 				colcnt = 0;
 			}
-		cnt2 = 0;
+		cnt = 0;
 		}
 
 	}

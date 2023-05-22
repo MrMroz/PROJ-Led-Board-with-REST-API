@@ -1,7 +1,7 @@
 add_executable(matrix-playground
         matrix_playground.c
-        lib/led_matrix.h
-        lib/picture.h
+        lib/matrix.h
+        lib/letters.h
         )
 
 target_link_libraries(matrix-playground
