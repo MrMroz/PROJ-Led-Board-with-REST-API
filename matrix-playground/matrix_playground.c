@@ -149,6 +149,9 @@ inline static uint8_t cex(uint8_t color, uint8_t rgb) {
 		case 2: //b
 			return (color & 0x3);
 			break;
+		default:
+			return(0x0);
+			break;
 	}
 }
 
@@ -311,9 +314,9 @@ void scrolling_text(char *text, uint8_t speed) {
 				case 'P':
 					load_right(P, colcnt);
 					break;
-				// case 'Q':
-				// 	load_right(Q, colcnt);
-				// 	break;
+				case 'Q':
+				 	load_right(Q, colcnt);
+				 	break;
 				case 'R':
 					load_right(R, colcnt);
 					break;
@@ -329,9 +332,9 @@ void scrolling_text(char *text, uint8_t speed) {
 				case 'V':
 					load_right(V, colcnt);
 					break;
-				// case 'W':
-				// 	load_right(W, colcnt);
-				// 	break;
+				case 'W':
+				 	load_right(W, colcnt);
+				 	break;
 				case 'X':
 					load_right(X, colcnt);
 					break;
@@ -340,6 +343,8 @@ void scrolling_text(char *text, uint8_t speed) {
 					break;
 				case 'Z':
 					load_right(Z, colcnt);
+					break;
+				case ' ':
 					break;
 			}
 
@@ -379,7 +384,7 @@ int main() {
 
 	spectrum_anim(200, 250);
 	
-	scrolling_text("LEDZIAKI",252);
+	scrolling_text("ABCDEFGHIJKLMNOPQRSTUVWXYZ AMOGUS LEDZIAKI",230);
 
 	spectrum_anim(200, 250);
 	return 0;
