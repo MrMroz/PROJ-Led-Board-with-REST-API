@@ -1,6 +1,6 @@
 import cv2
 import os
-import np
+import numpy as np
 from sys import exit
 
 
