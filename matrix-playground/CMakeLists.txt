@@ -1,7 +1,8 @@
 add_executable(matrix-playground
         matrix_playground.c
         lib/matrix.h
-        lib/letters.h
+        lib/symbols.h
+        lib/matrix.c
         )
 
 target_link_libraries(matrix-playground
