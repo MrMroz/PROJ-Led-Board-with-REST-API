@@ -1,6 +1,0 @@
-- server:
-    - custom:
-        path: /circle
-        methods:
-            - PUT
-            - DELETE

@@ -1,7 +1,0 @@
-- server:
-    - custom:
-        path: /led
-        methods:
-            - GET
-            - PUT
-            
