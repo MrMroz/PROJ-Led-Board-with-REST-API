@@ -8,6 +8,8 @@ BASE_DIR = os.getcwd()
 OUT_DIR = os.path.join(BASE_DIR, "output")
 IN_DIR = os.path.join(BASE_DIR, "input")
 TEMPLATE = "\nuint8_t <NAME>[32][19] = {"
+THRESHOLDING = 200
+
 
 terminate = False
 if not os.path.exists(IN_DIR):
@@ -42,7 +44,7 @@ with open(out_pth('all.txt'), mode='w', encoding='utf-8') as out_f:
             for row in img:
                 out += '\n\t\t\t\t\t\t  {'
                 for pixel in row:
-                    if pixel[3] >= 200:
+                    if pixel[3] >= THRESHOLDING:
                         out += '0xFF, '
                     else:
                         out += '0x00, '
