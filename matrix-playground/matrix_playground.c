@@ -1,21 +1,13 @@
-#include "pico/cyw43_arch.h"
-#include "pico/sync.h"
-#include "pico/time.h"
-#include "hardware/gpio.h"
-
 #include "lib/matrix.h"
 
-
 void demo() {
-	spectrum_anim(500, 250);
+	spectrum_anim(800, 250);
 	
 	sleep_ms(1000);
 	
-	scrolling_text("PROJEKT GRUPOWY LEDZIAKI ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789", 240);
+	scrolling_text("PROJEKT GRUPOWY LEDZIAKI ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789", 253);
 
 	sleep_ms(1000);
-
-	spectrum_anim(500, 250);
 }
 
 int main() {

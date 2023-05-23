@@ -1,7 +1,9 @@
 #include "matrix.h"
 
+uint8_t mx[MATRIX_HEIGHT][MATRIX_WIDTH] = {0};
+
 // Inicjalizacja pinów GPIO
-static inline void matrix_gpio_init() {
+void matrix_gpio_init() {
 	gpio_init(R1_PIN);
 	gpio_set_dir(R1_PIN, GPIO_OUT);
 	gpio_init(G1_PIN);
@@ -45,14 +47,14 @@ static inline void matrix_gpio_init() {
 	gpio_put(CLK_PIN, 0);
 }
 
-inline static void set_row(uint8_t r) {
+void set_row(uint8_t r) {
     gpio_put(A_PIN, (r & 0x0F) & (1 << 0)); 
     gpio_put(B_PIN, (r & 0x0F) & (1 << 1));
     gpio_put(C_PIN, (r & 0x0F) & (1 << 2));
     gpio_put(D_PIN, (r & 0x0F) & (1 << 3));
 }
 
-inline static void row_shift(uint8_t *arr, int n, bool rev, bool wrap) {
+void row_shift(uint8_t *arr, int n, bool rev, bool wrap) {
 	uint8_t tmp;
 	switch (rev) {
 		case false:
@@ -90,7 +92,7 @@ inline static void row_shift(uint8_t *arr, int n, bool rev, bool wrap) {
 
 // (r r r g g g b b)
 // threshold 0-7
-inline static void redraw_128(uint8_t row_num, uint8_t threshold) {
+void redraw_128(uint8_t row_num, uint8_t threshold) {
 	set_row(row_num);
 	
 	for(int i = 0; i < MATRIX_WIDTH; i++) {
@@ -114,7 +116,7 @@ inline static void redraw_128(uint8_t row_num, uint8_t threshold) {
 	gpio_put(OE_PIN, 1);
 }
 
-inline static void redraw_full() {
+void redraw_full() {
 	for(uint8_t k = 0; k < 7; k++) {
 		for(uint8_t i = 0; i < (MATRIX_HEIGHT/2); i++) {
 			redraw_128(i, k);
@@ -122,7 +124,7 @@ inline static void redraw_full() {
 	}
 }
 
-inline static void swap_mx_color(uint8_t c) {
+void swap_mx_color(uint8_t c) {
 	for(int i = 0; i < 32; i++) {
 		for(int k = 0; k < 64; k++) {
 			mx[i][k] = c;
@@ -131,7 +133,7 @@ inline static void swap_mx_color(uint8_t c) {
 }
 
 // rgb -> r - 0, g - 1, b - 0;
-inline static uint8_t cex(uint8_t color, uint8_t rgb) {
+uint8_t cex(uint8_t color, uint8_t rgb) {
 	switch(rgb) {
 		case 0: //r
 			return (color >> 5) & 0x7;
@@ -148,13 +150,13 @@ inline static uint8_t cex(uint8_t color, uint8_t rgb) {
 	}
 }
 
-inline static void full_shift(bool rev, bool wrap) {
+void full_shift(bool rev, bool wrap) {
 	for(int i = 0; i < MATRIX_HEIGHT; i++) {
 		row_shift(mx[i], MATRIX_WIDTH, rev, wrap);
 	}
 }
 
-inline static void load_right(uint8_t img[32][19], uint8_t col) {
+void load_right(uint8_t img[32][19], uint8_t col) {
 	for(int i = 0; i < MATRIX_HEIGHT; i++) {
 		mx[i][63] = img[i][col];
 	}
@@ -162,7 +164,7 @@ inline static void load_right(uint8_t img[32][19], uint8_t col) {
 
 
 
-inline static uint8_t spectrum_cycle(uint8_t c) {
+uint8_t spectrum_cycle(uint8_t c) {
 	uint8_t state;
 
 	if((cex(c, 0) == 7) && (cex(c, 1) < 7)) {state = 1;}
@@ -196,7 +198,7 @@ inline static uint8_t spectrum_cycle(uint8_t c) {
 	}
 }
 
-inline static void vertical_spectrum() {
+void vertical_spectrum() {
 	uint8_t vc;
 	for(int i = 0; i < 32; i++) {
 		vc = spectrum_cycle(mx[i][0]);
@@ -208,7 +210,7 @@ inline static void vertical_spectrum() {
 
 void spectrum_anim(uint16_t loops, uint8_t speed) {
 	uint8_t cnt = 0;
-	uint8_t cnt_max = UINT8_MAX - speed;
+	uint8_t cnt_max = UINT8_T_MAX - speed;
 
 	uint8_t init_c = 0b11100000;
 	for(int i = 0; i < 32; i++) {
@@ -243,7 +245,7 @@ void spectrum_anim(uint16_t loops, uint8_t speed) {
 	swap_mx_color(0); // Wyczyszczenie tablicy
 }
 
-inline static void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end) {
+void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end) {
 	switch(*text) {
 		case 'A':
 			load_right(A, *colcnt);
@@ -325,29 +327,40 @@ inline static void load_right_char(char *text, uint8_t *colcnt, short *steps_to_
 			break;
 		case '0':
 			load_right(_0, *colcnt);
+			break;
 		case '1':
 			load_right(_1, *colcnt);
+			break;
 		case '2':
 			load_right(_2, *colcnt);
+			break;
 		case '3':
 			load_right(_3, *colcnt);
+			break;
 		case '4':
 			load_right(_4, *colcnt);
+			break;
 		case '5':
 			load_right(_5, *colcnt);
+			break;
 		case '6':
 			load_right(_6, *colcnt);
+			break;
 		case '7':
 			load_right(_7, *colcnt);
+			break;
 		case '8':
 			load_right(_8, *colcnt);
+			break;
 		case '9':
 			load_right(_9, *colcnt);
+			break;
 		case ' ':
 			break; // Nie wyswietlamy nic 'colcnt' razy
+		case '\0':
+			break;
 		default: // Niezaimplementowane znaki pomijamy
-			text++;
-			*colcnt = 0;
+			*colcnt = 19;
 			*steps_to_end -= 19;
 			}
 }
@@ -355,8 +368,8 @@ inline static void load_right_char(char *text, uint8_t *colcnt, short *steps_to_
 void scrolling_text(char *text, uint8_t speed) {
 	swap_mx_color(0); // Wyczyszczenie tablicy
 	uint8_t cnt = 0;
-	uint8_t cnt_max = UINT8_MAX - speed;
-	short steps_to_end = strlen(text)*19 + 64;
+	uint8_t cnt_max = UINT8_T_MAX - speed;
+	short steps_to_end = strlen(text)*19 + 64 + 6;
 	uint8_t colcnt = 0;
 	
 	while(steps_to_end > 0) {
@@ -367,14 +380,19 @@ void scrolling_text(char *text, uint8_t speed) {
 			full_shift(false, false);
 			steps_to_end--;
 			
-			load_right_char(text, &colcnt, &steps_to_end);
+			if(steps_to_end >= 70) {
+				load_right_char(text, &colcnt, &steps_to_end);
+			}
 
 			colcnt++;
 			if(colcnt >= 19) {
 				colcnt = 0;
-				text++;
+
+				if(steps_to_end >= 70) {
+					text++;
+				}
 			}
-		cnt = 0;
+			cnt = 0;
 		}
 	}
 	swap_mx_color(0); // Wyczyszczenie tablicy
