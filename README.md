@@ -33,7 +33,7 @@ git submodule update --init
 cd ..
 git clone https://github.com/raspberrypi/pico-examples.git --branch master
 git clone https://github.com/MrMroz/PROJ-Led-Board-with-REST-API.git
-cd PROJ\_Led\_Board\_with\_REST\_API
+cd PROJ-Led-Board-with-REST-API
 git submodule update --init
 ```
 
