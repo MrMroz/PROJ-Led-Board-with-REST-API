@@ -6,7 +6,7 @@ add_executable(demo-circle
         )
 
 target_link_libraries(demo-circle
-		pico_stdio
+	pico_stdio
         pico_stdlib
         picow_http
         pico_cyw43_arch_lwip_threadsafe_background

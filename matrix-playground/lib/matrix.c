@@ -357,7 +357,10 @@ void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end) {
 			break;
 		case ' ':
 			break; // Nie wyswietlamy nic 'colcnt' razy
+		case '_':
+			break; // Nie wyswietlamy nic 'colcnt' razy
 		case '\0':
+			*steps_to_end = 69;
 			break;
 		default: // Niezaimplementowane znaki pomijamy
 			*colcnt = 19;
@@ -371,7 +374,6 @@ void scrolling_text(char *text, uint8_t speed) {
 	uint8_t cnt_max = UINT8_T_MAX - speed;
 	short steps_to_end = strlen(text)*19 + 64 + 6;
 	uint8_t colcnt = 0;
-	
 	while(steps_to_end > 0) {
 		redraw_full();
 		cnt++;

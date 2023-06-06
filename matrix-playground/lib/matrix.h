@@ -98,7 +98,7 @@ void vertical_spectrum();
 
 // Kompletna animacja kolorystyczna, blokujaca
 // loops - ilosc petli, okresla dlugosc animacji
-// speed - predkosc animacji, rekomendowane 10
+// speed - predkosc animacji, rekomendowane 230-250
 void spectrum_anim(uint16_t loops, uint8_t speed);
 
 // Funkcja pomocnicza dla scrolling_text(), zawiera instrukcje case wybierajaca odpowiednia tablice symbolu

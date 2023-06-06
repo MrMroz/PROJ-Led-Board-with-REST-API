@@ -1,0 +1,13 @@
+- server:
+    - custom:
+        path: /api/text
+        methods:
+            - PUT
+    - custom:
+        path: /api/spectrum
+        methods:
+            - PUT
+    - custom:
+        path: /api/next
+        methods:
+            - GET
