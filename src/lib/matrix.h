@@ -77,7 +77,7 @@ void swap_mx_color(uint8_t c);
 uint8_t cex(uint8_t color, uint8_t rgb);
 
 // Laduje wskazana kolumne obrazu w tablicy na skrajna prawa kolumne tablicy mx
-void load_right(uint8_t img[32][19], uint8_t col);
+void load_right(uint8_t img[32][19], uint8_t col, uint8_t color);
 
 
 
@@ -98,12 +98,14 @@ void vertical_spectrum();
 
 // Kompletna animacja kolorystyczna, blokujaca
 // loops - ilosc petli, okresla dlugosc animacji
-// speed - predkosc animacji, rekomendowane 10
+// speed - predkosc animacji, rekomendowane 230-250
 void spectrum_anim(uint16_t loops, uint8_t speed);
 
 // Funkcja pomocnicza dla scrolling_text(), zawiera instrukcje case wybierajaca odpowiednia tablice symbolu
-void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end);
+void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end, uint8_t color);
+
 
 // Funkcja wyswietlajaca dowolny tekst A-Z, 0-9 lub spacje
 // W teorii maksymalna dlugosc tekstu to 1721, ograniczona przez short steps_to_end
-void scrolling_text(char *text, uint8_t speed);
+// Koloruje wyswietlany tekst
+void scrolling_text(char *text, uint8_t speed, uint8_t color);
