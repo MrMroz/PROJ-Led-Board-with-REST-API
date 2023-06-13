@@ -13,6 +13,7 @@ struct led_request {
     uint8_t type;
     char text[MAX_TEXT_LEN];
     uint8_t speed;
+    uint8_t color;
 };
 
 extern queue_t queue;

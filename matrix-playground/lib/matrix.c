@@ -156,10 +156,18 @@ void full_shift(bool rev, bool wrap) {
 	}
 }
 
-void load_right(uint8_t img[32][19], uint8_t col) {
-	for(int i = 0; i < MATRIX_HEIGHT; i++) {
-		mx[i][63] = img[i][col];
+
+void load_right(uint8_t img[32][19], uint8_t col, uint8_t color) {
+	if(color == 0x00) {
+		for(int i = 0; i < MATRIX_HEIGHT; i++) {
+			mx[i][63] = img[i][col];
+		}
+	} else {
+		for(int i = 0; i < MATRIX_HEIGHT; i++) {
+			mx[i][63] = (img[i][col] & color);
+		}
 	}
+
 }
 
 
@@ -245,115 +253,115 @@ void spectrum_anim(uint16_t loops, uint8_t speed) {
 	swap_mx_color(0); // Wyczyszczenie tablicy
 }
 
-void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end) {
+void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end, uint8_t color) {
 	switch(*text) {
 		case 'A':
-			load_right(A, *colcnt);
+			load_right(A, *colcnt, color);
 			break;
 		case 'B':
-			load_right(B, *colcnt);
+			load_right(B, *colcnt, color);
 			break;
 		case 'C':
-			load_right(C, *colcnt);
+			load_right(C, *colcnt, color);
 			break;
 		case 'D':
-			load_right(D, *colcnt);
+			load_right(D, *colcnt, color);
 			break;
 		case 'E':
-			load_right(E, *colcnt);
+			load_right(E, *colcnt, color);
 			break;
 		case 'F':
-			load_right(F, *colcnt);
+			load_right(F, *colcnt, color);
 			break;
 		case 'G':
-			load_right(G, *colcnt);
+			load_right(G, *colcnt, color);
 			break;
 		case 'H':
-			load_right(H, *colcnt);
+			load_right(H, *colcnt, color);
 			break;
 		case 'I':
-			load_right(I, *colcnt);
+			load_right(I, *colcnt, color);
 			break;
 		case 'J':
-			load_right(J, *colcnt);
+			load_right(J, *colcnt, color);
 			break;
 		case 'K':
-			load_right(K, *colcnt);
+			load_right(K, *colcnt, color);
 			break;
 		case 'L':
-			load_right(L, *colcnt);
+			load_right(L, *colcnt, color);
 			break;
 		case 'M':
-			load_right(M, *colcnt);
+			load_right(M, *colcnt, color);
 			break;
 		case 'N':
-			load_right(N, *colcnt);
+			load_right(N, *colcnt, color);
 			break;
 		case 'O':
-			load_right(O, *colcnt);
+			load_right(O, *colcnt, color);
 			break;
 		case 'P':
-			load_right(P, *colcnt);
+			load_right(P, *colcnt, color);
 			break;
 		case 'Q':
-			load_right(Q, *colcnt);
+			load_right(Q, *colcnt, color);
 			break;
 		case 'R':
-			load_right(R, *colcnt);
+			load_right(R, *colcnt, color);
 			break;
 		case 'S':
-			load_right(S, *colcnt);
+			load_right(S, *colcnt, color);
 			break;
 		case 'T':
-			load_right(T, *colcnt);
+			load_right(T, *colcnt, color);
 			break;
 		case 'U':
-			load_right(U, *colcnt);
+			load_right(U, *colcnt, color);
 			break;
 		case 'V':
-			load_right(V, *colcnt);
+			load_right(V, *colcnt, color);
 			break;
 		case 'W':
-			load_right(W, *colcnt);
+			load_right(W, *colcnt, color);
 			break;
 		case 'X':
-			load_right(X, *colcnt);
+			load_right(X, *colcnt, color);
 			break;
 		case 'Y':
-			load_right(Y, *colcnt);
+			load_right(Y, *colcnt, color);
 			break;
 		case 'Z':
-			load_right(Z, *colcnt);
+			load_right(Z, *colcnt, color);
 			break;
 		case '0':
-			load_right(_0, *colcnt);
+			load_right(_0, *colcnt, color);
 			break;
 		case '1':
-			load_right(_1, *colcnt);
+			load_right(_1, *colcnt, color);
 			break;
 		case '2':
-			load_right(_2, *colcnt);
+			load_right(_2, *colcnt, color);
 			break;
 		case '3':
-			load_right(_3, *colcnt);
+			load_right(_3, *colcnt, color);
 			break;
 		case '4':
-			load_right(_4, *colcnt);
+			load_right(_4, *colcnt, color);
 			break;
 		case '5':
-			load_right(_5, *colcnt);
+			load_right(_5, *colcnt, color);
 			break;
 		case '6':
-			load_right(_6, *colcnt);
+			load_right(_6, *colcnt, color);
 			break;
 		case '7':
-			load_right(_7, *colcnt);
+			load_right(_7, *colcnt, color);
 			break;
 		case '8':
-			load_right(_8, *colcnt);
+			load_right(_8, *colcnt, color);
 			break;
 		case '9':
-			load_right(_9, *colcnt);
+			load_right(_9, *colcnt, color);
 			break;
 		case ' ':
 			break; // Nie wyswietlamy nic 'colcnt' razy
@@ -368,7 +376,7 @@ void load_right_char(char *text, uint8_t *colcnt, short *steps_to_end) {
 			}
 }
 
-void scrolling_text(char *text, uint8_t speed) {
+void scrolling_text(char *text, uint8_t speed, uint8_t color) {
 	swap_mx_color(0); // Wyczyszczenie tablicy
 	uint8_t cnt = 0;
 	uint8_t cnt_max = UINT8_T_MAX - speed;
@@ -383,7 +391,7 @@ void scrolling_text(char *text, uint8_t speed) {
 			steps_to_end--;
 			
 			if(steps_to_end >= 70) {
-				load_right_char(text, &colcnt, &steps_to_end);
+				load_right_char(text, &colcnt, &steps_to_end, color);
 			}
 
 			colcnt++;

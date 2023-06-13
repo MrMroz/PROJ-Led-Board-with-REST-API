@@ -32,10 +32,10 @@ void core1_led_controller() {
 
             switch(payload.type) {
                 case 1:
-                    scrolling_text(payload.text, payload.speed);
+                    scrolling_text(payload.text, payload.speed, payload.color);
                     break;
                 case 2:
-                    spectrum_anim(500, payload.speed);
+                    spectrum_anim(1000, payload.speed);
                     break;
                 default:
                     printf("Core1 :: Invalid request type\n");
