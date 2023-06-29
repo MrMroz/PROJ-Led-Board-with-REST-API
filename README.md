@@ -19,6 +19,17 @@ Projekt powstał w ramach przedmiotu *Projekt Grupowy 1/2*.
 - [Connection to the internet with Pico W](https://datasheets.raspberrypi.com/picow/connecting-to-the-internet-with-pico-w.pdf)
 - [Raspberry Pi Pico C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf)
 
+## REST API
+
+Zdefiniowano trzy styki REST:
+- `/api/text`, przyjmujący trzy parametry query
+  - `t` - tekst do wyświetlenia, tylko `A-Z` `0-9` i znak `_` jako spacja, maksymalnie `254` znaków
+  - `speed` -  opcjonalny, szybkość przewijania, zakres `0-255`, najlepsze efekty dla zakresu `245-254`
+  - `color` - opcjonalny, liczba z zakresu `0-255` zawierająca kolory zakodowane w sposób `RRRGGGBB` - 8 bitów
+- `/api/spectrum`, wyświetlający animację prezentującą spektrum kolorów
+  - `speed` - prędkość animacji
+- `/api/next` - zwraca dane o żądaniu w kolejce które będzie obsługiwane jako następne, postać `json`
+
 ## Budowanie projektu
 
 Testowano na **Kali Linux**, powinno działać na każdej dystrybucji opartej na **Debianie**.
